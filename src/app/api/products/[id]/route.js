@@ -10,7 +10,7 @@ export async function GET(request, { params }) {
         return NextResponse.json(result[0])
     } catch (error) {
         return NextResponse.json({
-            message: message.error
+            message: error.message
         }, { status: 500, })
     }
 }
@@ -24,7 +24,7 @@ export async function DELETE(request, { params }) {
         return new Response(null, { status: 204, })
     } catch (error) {
         return NextResponse.json({
-            message: message.error
+            message: error.message
         }, { status: 500, })
     }
 }
@@ -39,8 +39,11 @@ export async function PUT(request, { params }) {
         const updateProduct = await conn.query('SELECT * FROM product WHERE id = ?', [params.id])
         return NextResponse.json(updateProduct[0])
     } catch (error) {
-        return NextResponse.json({
-            message: message.error
-        }, { status: 500, })
+        return NextResponse.json(
+            {
+                message: error.message,
+            },
+            { status: 500 }
+        );
     }
 }

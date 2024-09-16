@@ -12,7 +12,7 @@ function ProductForm() {
 
     const form = useRef(null);
     const router = useRouter();
-
+    const params = useParams();
 
     const handleChange = (e) => {
         setProduct({
@@ -21,15 +21,34 @@ function ProductForm() {
         });
     };
 
-
+    useEffect(() => {
+        if (params.id) {
+            axios.get("/api/products/" + params.id).then((res) => {
+                setProduct({
+                    name: res.data.name,
+                    price: res.data.price,
+                    description: res.data.description,
+                });
+            });
+        }
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const res = await axios.post("/api/products", product)
-        form.current.reset()
-        router.refresh();
+
+
+        if (!params.id) {
+            const res = await axios.post("/api/products", product
+            );
+        } else {
+            const res = await axios.put("/api/products/" + params.id, product,
+            );
+        }
+
+        form.current.reset();
         router.push("/products");
-    }
+        router.refresh();
+    };
 
     return (
         <div className="flex ">
@@ -86,9 +105,8 @@ function ProductForm() {
 
 
 
-
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Create Product
+                    {params.id ? "Update Product" : "Create Product"}
                 </button>
             </form>
         </div>
